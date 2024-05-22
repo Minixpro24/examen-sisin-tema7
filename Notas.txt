@@ -1,0 +1,168 @@
+pasos
+	primero vagrant init
+	code . para entrar al visual desde el directorio
+	config.vm.box = "ubuntu/xenial64" congiguracion de la box
+  	config.vm.network "private_network", ip:"192.168.56.10" declaracion de red en este caso privada
+  	config.vm.synced_folder ".", "/vagrant" directorio
+	Vagrant up
+	vagrant ssh
+	sudo apt update
+	sudo apt upgrade
+	sudo apt install -y nginx
+	sudo nano /etc/nginx/sites-enabled/default
+	root /vagrant
+	sudo systemctl restart nginx
+	sudo chmod -R 755 /vagrant 	(chmod=permisos para el directorio)
+					(755= (1-7) permisos comenzando 
+				   	desde 1 hasta el 7 que son todos los permisos)
+	sudo chown -R www-data:www-data /vagrant
+	exit
+	vagrant destroy
+
+
+
+Vagrant.configure("2") do |config|
+ 
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", ip:"192.168.56.10"
+  config.vm.synced_folder ".", "/vagrant"
+	
+  config.vm.provision "shell", inline: <<-SHELL
+
+  sudo apt update
+  sudo apt install -y nginx
+  sudo sed -i -e 's/\\/var\\/www\\/html/\\/vagrant/g' /etc/nginx/sites-enabled/default
+  sudo chmod -R 755 /vagrant
+  sudo chown -R www-data:www-data /vagrant
+  sudo systemctl restart nginx
+
+
+  SHELL
+
+end
+
+
+
+Vagrant.configure("2") do |config|
+ 
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.hostname = "server-virtual-David-Fraga"
+  config.vm.network "private_network", ip:"192.168.30.22"
+  config.vm.synced_folder ".", "/simulacro_examen_David-Fraga"
+  config.vm.provider "virtualbox" do |vb| 
+    vb.memory = "1024"
+    vb.cpus = 2
+  end
+
+  config.vm.provision "shell", inline:<<-SHELL           cerrar con SHELL
+    sudo apt update
+    sudo apt upgrade
+    sudo apt install -y nginx
+    sudo sed -i -e 's/\\/var\\/www\\/html/\\/simulacro_examen_David-Fraga' /etc/nginx/sites-enabled/default
+    sudo chmod -R 755 /simulacro_examen_David-Fraga
+    sudo cdown -R www-data:www-data /simulacro_examen_David-Fraga
+    sudo echo "<p>Conseguido</p>" > /simulacro_examen_David-Fraga/index.html
+    sudo sudo systemctl restart nginx
+    sudo apt install -y apache2
+  SHELL
+end
+
+cd /var/www/html
+
+
+git clone enlace . 
+	Para clonar el directorio
+code .
+	Abrir desde la terminal el visual desde el directorio en el que estamos
+vagrant
+	Es una herramienta para poder generar entornos virtuales
+vagrant init
+	Generar el archivo vagrant file
+vagrant box list 
+	Lista de boxes descargados en nuestros sistema operativo.
+vagrant box add ubuntu/xenial64
+	Agregar el box ubuntu/xenial64 a la lista.
+config.vm.box = "ubuntu/xenial64"
+	modificar el archivo vagrant para utilizar en la mv el box xenial64
+config.vm.network "private_network", ip:"192.168.56.11"
+	configuracion de servidor privada y estatica.
+config.vm.synced_folder ".", "/David_Fraga"
+	Configuracion para definir y vincular el directorio actual con otro directorio de virtualizacion
+config.vm.hostname="Nombre del host"
+git init 
+	Inicializa el repositorio y crea el control de versiones.
+.gitignore
+	Archivo donde colocamos los archivos o directorios privados que no queremos subir al repositorio
+	(/.vagrant) se colocan las direcciones relativas o absolutas de los archivos que no se quieren subir
+vagrant up
+	Crear el servidor virtual o la virtualizacion
+vagrant (ssh puerto 22 | http puerto 80 | https puerto 443 | mysql puerto 3306 | FTP puerto 20,21 | SFTP puerto 22)
+	Protocolo de comunicacion con puerto con la api de conexion, conexion de la computadora con la maquina virtual.
+git add -A
+	guardar todo el proyecto entero empezazndo desde el directorio actual con todos sus hijos o ramas.
+git status
+	Revision de los status de los archivos
+git commit -m "asdasd"
+	promesa de subir archivos, explicando que se hizo en este commit.
+git push
+	Enviar las modificaciones asignadas en el add y commit
+sudo apt update
+	Revisar actualizaciones pendientes
+sudo apt upgrade
+	actualizar las app
+git log --oneline
+	se utiliza para mostrar la historia de commits.
+
+
+Tablas sql
+
+CREATE TABLE libros (
+    idLibro INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    autor VARCHAR(100) NOT NULL,
+    anio_publicacion INT,
+    genero VARCHAR(100),
+    precio DECIMAL(10, 2)
+);
+
+
+Cambiar el utf
+ALTER DATABASE nombre base de datos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+Insertar datos en tablas
+echo "-- Insertar datos de ejemplo en la tabla 'libros'" > /home/vagrant/datos_libros.sql
+   echo "INSERT INTO gestion_libreria.libros (titulo, autor, anio_publicacion, genero, precio) VALUES" >> /home/vagrant/datos_libros.sql
+   echo "('Cien Años de Soledad', 'Gabriel García Márquez', 1967, 'Novela', 15.99)," >> /home/vagrant/datos_libros.sql
+   echo "('Don Quijote de la Mancha', 'Miguel de Cervantes', 1605, 'Novela', 12.99)," >> /home/vagrant/datos_libros.sql
+   echo "('1984', 'George Orwell', 1949, 'Distopía', 13.99);" >> /home/vagrant/datos_libros.sql
+
+
+location /backend/ {
+           # Configuración para manejar solicitudes en /backend/
+           include fastcgi_params;
+           fastcgi_param REQUEST_METHOD $request_method;
+           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+           fastcgi_pass unix:/var/run/php/php7.0-fpm.sock; # Asegúrate de que coincida con la versión correcta
+        }
+
+Dentro de mysql 
+SOURCE /home/vagrant/datos_pacientes.sql
+
+
+mysql -u root -p
+ 
+-- Crear la base de datos
+CREATE DATABASE gestion_empleados;
+ 
+-- Usar dicha base de datos
+USE gestion_empleados;
+ 
+-- Crear la tabla "empleados"
+CREATE TABLE empleados (
+    idEmpleado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    edad INT,
+    salario DECIMAL(10, 2),
+    departamento VARCHAR(100)
+);
